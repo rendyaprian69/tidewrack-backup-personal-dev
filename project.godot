@@ -31,31 +31,40 @@ renderer/rendering_method.mobile="gl_compatibility"
 
 [input]
 
-; Controller support (Public Demo milestone). Gamepad events are layered onto
-; Godot's built-in ui_* actions so the keyboard bindings keep working unchanged.
+; Controller support (Public Demo milestone).
+;
+; IMPORTANT: an action listed here REPLACES Godot's built-in event list for
+; that action — it does not add to it. Every ui_* action below must therefore
+; spell out its keyboard keys as well as its gamepad events, or the keyboard
+; stops working. Each list = built-in keys + WASD + d-pad + left stick.
+;
+; Keycodes: Enter 4194309, KP Enter 4194310, Space 32, Escape 4194305,
+;           Left 4194319, Up 4194320, Right 4194321, Down 4194322,
+;           W 87, A 65, S 83, D 68.
+; Joypad buttons: 0 = A/Cross, 1 = B/Circle, 11-14 = D-pad up/down/left/right.
 ui_accept={
 "deadzone": 0.5,
-"events": [Object(InputEventJoypadButton,"button_index":0)]
+"events": [Object(InputEventKey,"physical_keycode":4194309), Object(InputEventKey,"physical_keycode":4194310), Object(InputEventKey,"physical_keycode":32), Object(InputEventJoypadButton,"button_index":0)]
 }
 ui_cancel={
 "deadzone": 0.5,
-"events": [Object(InputEventJoypadButton,"button_index":1)]
+"events": [Object(InputEventKey,"physical_keycode":4194305), Object(InputEventJoypadButton,"button_index":1)]
 }
 ui_left={
 "deadzone": 0.5,
-"events": [Object(InputEventJoypadMotion,"axis":0,"axis_value":-1.0)]
+"events": [Object(InputEventKey,"physical_keycode":4194319), Object(InputEventKey,"physical_keycode":65), Object(InputEventJoypadButton,"button_index":13), Object(InputEventJoypadMotion,"axis":0,"axis_value":-1.0)]
 }
 ui_right={
 "deadzone": 0.5,
-"events": [Object(InputEventJoypadMotion,"axis":0,"axis_value":1.0)]
+"events": [Object(InputEventKey,"physical_keycode":4194321), Object(InputEventKey,"physical_keycode":68), Object(InputEventJoypadButton,"button_index":14), Object(InputEventJoypadMotion,"axis":0,"axis_value":1.0)]
 }
 ui_up={
 "deadzone": 0.5,
-"events": [Object(InputEventJoypadMotion,"axis":1,"axis_value":-1.0)]
+"events": [Object(InputEventKey,"physical_keycode":4194320), Object(InputEventKey,"physical_keycode":87), Object(InputEventJoypadButton,"button_index":11), Object(InputEventJoypadMotion,"axis":1,"axis_value":-1.0)]
 }
 ui_down={
 "deadzone": 0.5,
-"events": [Object(InputEventJoypadMotion,"axis":1,"axis_value":1.0)]
+"events": [Object(InputEventKey,"physical_keycode":4194322), Object(InputEventKey,"physical_keycode":83), Object(InputEventJoypadButton,"button_index":12), Object(InputEventJoypadMotion,"axis":1,"axis_value":1.0)]
 }
 
 [global]

@@ -40,12 +40,21 @@ func save_game() -> bool:
 		"scene": current_scene,
 		"flags": flags,
 	}
-	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
+	# Write to a temp file and rename it into place so a quit or crash mid-write
+	# can never leave a truncated save.json behind (the PR2 corruption shape).
+	var tmp_path := SAVE_PATH + ".tmp"
+	var file := FileAccess.open(tmp_path, FileAccess.WRITE)
 	if file == null:
 		push_error("GameState: could not open save file for writing.")
 		return false
 	file.store_string(JSON.stringify(payload, "\t"))
+	file.flush()
 	file.close()
+	var err := DirAccess.rename_absolute(tmp_path, SAVE_PATH)
+	if err != OK:
+		push_error("GameState: could not finalise save file (error %d)." % err)
+		DirAccess.remove_absolute(tmp_path)
+		return false
 	return true
 
 
