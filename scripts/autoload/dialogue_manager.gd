@@ -15,6 +15,7 @@ signal line_shown(speaker: String, text: String, choices: Array)
 signal dialogue_finished
 
 var _graph: Dictionary = {}
+var _graph_path: String = ""
 var _current_id: String = ""
 var is_active: bool = false
 
@@ -24,9 +25,38 @@ func start(path: String, start_id: String = "start") -> bool:
 	if graph.is_empty():
 		return false
 	_graph = graph
+	_graph_path = path
 	is_active = true
 	dialogue_started.emit()
 	_goto(start_id)
+	return true
+
+
+## Where the player is in the current conversation, for the save file:
+## {"path": graph file, "node": current node id}. Empty when no dialogue is
+## active, so GameState can store it unconditionally.
+func snapshot() -> Dictionary:
+	if not is_active or _current_id == "":
+		return {}
+	return {"path": _graph_path, "node": _current_id}
+
+
+## Reopen a conversation at a saved node. The node's own `set_flag` is NOT
+## re-applied: it was applied when the node was first entered and the flags
+## are restored from the save alongside this snapshot. Returns false (and
+## starts nothing) if the graph or node no longer exists, so a save made
+## against old dialogue data degrades to "not in dialogue" instead of
+## erroring.
+func resume(path: String, node_id: String) -> bool:
+	var graph := _load_graph(path)
+	if graph.is_empty() or not graph.has(node_id):
+		push_warning("DialogueManager: cannot resume '%s' at '%s'; skipping." % [path, node_id])
+		return false
+	_graph = graph
+	_graph_path = path
+	is_active = true
+	dialogue_started.emit()
+	_goto(node_id, false)
 	return true
 
 
@@ -61,14 +91,15 @@ func choose(index: int) -> void:
 		_goto(str(next))
 
 
-func _goto(id: String) -> void:
+func _goto(id: String, apply_flags: bool = true) -> void:
 	if not _graph.has(id):
 		push_error("DialogueManager: missing node '%s'." % id)
 		_finish()
 		return
 	_current_id = id
 	var node: Dictionary = _graph[id]
-	_apply_flags(node.get("set_flag", {}))
+	if apply_flags:
+		_apply_flags(node.get("set_flag", {}))
 	line_shown.emit(
 		str(node.get("speaker", "")),
 		str(node.get("text", "")),
@@ -84,6 +115,7 @@ func _apply_flags(dict: Dictionary) -> void:
 func _finish() -> void:
 	is_active = false
 	_graph = {}
+	_graph_path = ""
 	_current_id = ""
 	dialogue_finished.emit()
 

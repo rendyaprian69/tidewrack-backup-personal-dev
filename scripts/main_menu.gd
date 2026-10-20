@@ -83,6 +83,11 @@ func _on_new_game() -> void:
 func _on_continue() -> void:
 	if GameState.load_game():
 		get_tree().change_scene_to_file(GameState.current_scene)
+	else:
+		# The file exists but did not load (corrupt or from a newer build):
+		# say so instead of silently doing nothing.
+		_continue_button.text = "Continue — save file damaged"
+		_continue_button.disabled = true
 
 
 func _on_settings() -> void:

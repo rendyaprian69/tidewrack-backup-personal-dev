@@ -15,16 +15,42 @@ var _paused: bool = false
 
 
 func _ready() -> void:
+	# The scene itself keeps processing while the tree is paused so Esc can
+	# unpause; the player and the dialogue box are explicitly pausable.
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	_build_room()
 	_build_player()
 	_build_interactables()
 	_build_hud()
 
 	var dialogue_box := preload("res://scenes/ui/dialogue_box.tscn").instantiate()
+	dialogue_box.process_mode = Node.PROCESS_MODE_PAUSABLE
 	add_child(dialogue_box)
 
 	DialogueManager.dialogue_started.connect(func(): _set_movement(false))
 	DialogueManager.dialogue_finished.connect(func(): _set_movement(true))
+
+	_apply_loaded_state()
+
+
+## If we got here through Continue, put the player back where the save left
+## them and reopen a conversation that was in progress. Used-interactable
+## state and flags are already live in GameState; the journal was restored
+## by load_game().
+func _apply_loaded_state() -> void:
+	if not GameState.pending_restore or GameState.current_scene != scene_file_path:
+		return
+	GameState.consume_restore()
+	if GameState.player_pos is Vector2:
+		var pos: Vector2 = GameState.player_pos
+		var b := _player.bounds
+		_player.position = Vector2(
+			clampf(pos.x, b.position.x, b.position.x + b.size.x),
+			clampf(pos.y, b.position.y, b.position.y + b.size.y))
+	var saved_dialogue: Dictionary = GameState.dialogue
+	if not saved_dialogue.is_empty():
+		# Deferred so the dialogue box has connected its signals first.
+		DialogueManager.resume.call_deferred(saved_dialogue["path"], saved_dialogue["node"])
 
 
 func _build_room() -> void:
@@ -48,6 +74,7 @@ func _build_room() -> void:
 
 func _build_player() -> void:
 	_player = Player.new()
+	_player.process_mode = Node.PROCESS_MODE_PAUSABLE
 	_player.bounds = ROOM.grow(-30)
 	_player.position = Vector2(ROOM.position.x + ROOM.size.x * 0.5, ROOM.position.y + ROOM.size.y - 60)
 	add_child(_player)
@@ -138,10 +165,13 @@ func _set_movement(enabled: bool) -> void:
 		_player.can_move = enabled and not _paused
 
 
+## Pausing uses the scene tree's pause so the typewriter, dialogue input and
+## player all freeze together; the pause layer runs with PROCESS_MODE_ALWAYS.
+## Pausing mid-dialogue is allowed: saves are atomic and record the open
+## conversation, so a save taken here resumes at the same line.
 func _toggle_pause() -> void:
-	if DialogueManager.is_active:
-		return
 	_paused = not _paused
+	get_tree().paused = _paused
 	_set_movement(not _paused)
 	if _paused:
 		_show_pause_menu()
@@ -154,6 +184,7 @@ func _show_pause_menu() -> void:
 	var layer := CanvasLayer.new()
 	layer.layer = 20
 	layer.name = "PauseLayer"
+	layer.process_mode = Node.PROCESS_MODE_ALWAYS
 	layer.add_child(overlay)
 	add_child(layer)
 
@@ -174,12 +205,13 @@ func _show_pause_menu() -> void:
 	resume.pressed.connect(func():
 		layer.queue_free()
 		_paused = false
-		_set_movement(true))
+		get_tree().paused = false
+		_set_movement(not DialogueManager.is_active))
 	vbox.add_child(resume)
 
 	var save := _menu_button("Save")
 	save.pressed.connect(func():
-		GameState.current_scene = scene_file_path
+		GameState.capture(scene_file_path, _player.position)
 		var ok := GameState.save_game()
 		save.text = "Saved ✓" if ok else "Save failed")
 	vbox.add_child(save)
@@ -190,7 +222,9 @@ func _show_pause_menu() -> void:
 	vbox.add_child(settings)
 
 	var menu := _menu_button("Main Menu")
-	menu.pressed.connect(func(): get_tree().change_scene_to_file("res://scenes/main_menu.tscn"))
+	menu.pressed.connect(func():
+		get_tree().paused = false
+		get_tree().change_scene_to_file("res://scenes/main_menu.tscn"))
 	vbox.add_child(menu)
 
 	resume.grab_focus()

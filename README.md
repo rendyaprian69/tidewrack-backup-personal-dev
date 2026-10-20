@@ -14,13 +14,15 @@ Built solo by **Fogline Games** (Seattle) in **Godot 4**, shipping to Steam.
 
 | Action        | Key                     |
 |---------------|-------------------------|
-| Move          | Arrow keys              |
-| Interact      | Enter / Space           |
-| Advance / skip line | Enter / Space     |
-| Pause / back  | Esc                     |
+| Move          | Arrow keys / WASD / left stick / d-pad |
+| Interact      | Enter / Space / A (Cross)              |
+| Advance / skip line | Enter / Space / A (Cross)        |
+| Pause / back  | Esc / B (Circle)                       |
 
-The game uses only Godot's built-in input actions, so it works with no input
-remapping (controller support and remappable keys are a Public Demo milestone).
+Keyboard and gamepad bindings are layered onto Godot's built-in `ui_*` actions
+in `project.godot`; an action listed there replaces the engine defaults, so the
+keyboard keys are spelled out explicitly. The pause menu can open mid-dialogue;
+saving there records the open conversation and resumes at the same line.
 
 ## Running it
 
@@ -34,8 +36,10 @@ godot -e --path .
 godot --path .
 ```
 
-The main scene is `scenes/main_menu.tscn`. Saves are written to Godot's
-`user://save.json` (per-OS user data dir).
+The main scene is `scenes/main_menu.tscn`. Saves are written atomically to
+Godot's `user://save.json` (per-OS user data dir) and hold the scene, story and
+puzzle flags, player position, used interactables, journal entries and any
+conversation in progress (format version 2; version 1 files still load).
 
 ## Project layout
 
@@ -50,6 +54,7 @@ tidewrack/
 │   ├── autoload/
 │   │   ├── game_state.gd     # story flags + save/load  (autoload: GameState)
 │   │   └── dialogue_manager.gd  # branching graph player (autoload: DialogueManager)
+│   ├── journal.gd            # discovered-log entries  (autoload: Journal)
 │   ├── main_menu.gd, settings.gd
 │   ├── game.gd               # builds the level + HUD + pause menu
 │   ├── player.gd             # top-down movement (Player)
