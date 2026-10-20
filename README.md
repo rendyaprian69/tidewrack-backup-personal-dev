@@ -58,7 +58,7 @@ tidewrack/
 ├── data/dialogue/
 │   └── keeper_intro.json     # the keeper's-log conversation
 ├── assets/{sprites,audio,fonts}/   # placeholder art for now
-├── tests/validate_dialogue.py      # engine-free dialogue-graph checker
+├── tests/validate_dialogue.py      # engine-free dialogue-graph checker + flag report
 └── docs/                     # GDD, narrative bible, milestones, credits
 ```
 
