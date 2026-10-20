@@ -43,6 +43,11 @@ stable — save files and future branches depend on them.
 | `believer`      | Logbook, choice 1                        | Player believes something was out there. |
 | `trusted_edith` | Logbook, choice 2 (true/false)           | Player will / won't share the log. |
 | `radioed_tom`   | Radio conversation                        | Player has contacted Tom. |
+| `lamp_relit`    | Lamp-room relight puzzle (demo content pass) | The great light is lit again; act-one gate. Read by `lamp_room.gd`. Not set in this checkout — the validator reports it as a dead gate until the puzzle lands. |
+
+The validator (`tests/validate_dialogue.py`) reads this table: a flag set by any dialogue graph
+that is not listed here fails the run, and a flag read by code that nothing sets does too. Add the
+row before you add the flag.
 
 ## Timeline (fiction)
 
