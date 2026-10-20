@@ -25,7 +25,7 @@ who answers you) responds. Repeat across locations toward the water.
 | Save / load        | ✅ vertical slice | Single slot, `user://save.json`. |
 | Menus + settings   | ✅ vertical slice | Title, pause, volume, fullscreen. |
 | Player movement    | ✅ vertical slice | Top-down; wall collision pending. |
-| Journal            | ⏳ demo           | Tracks discovered logs; re-readable. |
+| Journal            | ⏳ demo           | `journal.gd` stores discovered entry ids (persisted in save v2 on the fix branch); no reader UI in this checkout. The shipped demo had one — playtesters call it "the logbook". |
 | Second location    | ⏳ demo           | The lamp room. |
 | Controller + remap  | ⏳ demo          | Gamepad bindings in (`project.godot`, layered on `ui_*`); button glyphs and key remapping outstanding. |
 | Localization        | ⏳ press build    | String extraction + translation tables. |
