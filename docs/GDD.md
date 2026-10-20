@@ -27,7 +27,7 @@ who answers you) responds. Repeat across locations toward the water.
 | Player movement    | ✅ vertical slice | Top-down; wall collision pending. |
 | Journal            | ⏳ demo           | Tracks discovered logs; re-readable. |
 | Second location    | ⏳ demo           | The lamp room. |
-| Controller + remap  | ⏳ demo          | Currently keyboard-only, built-in actions. |
+| Controller + remap  | ⏳ demo          | Gamepad bindings in (`project.godot`, layered on `ui_*`); button glyphs and key remapping outstanding. |
 | Localization        | ⏳ press build    | String extraction + translation tables. |
 | Accessibility       | ⏳ press build    | Text scale, dyslexia-friendly font, no-flash. |
 | Steam integration   | ⏳ launch         | Achievements, cloud saves. |

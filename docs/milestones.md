@@ -13,6 +13,12 @@ GitHub Milestones mirror these and the issue tracker is grouped under them.
 
 ## Where things stand (2026-07)
 
+> Correction, 2026-10-21: the 29 June scope lock report certified the journal
+> UI and the lamp-room puzzle as complete and declared controller support out
+> of scope. At that date the journal was a storage scaffold, the lamp room an
+> empty placeholder, and controller bindings were already in the input map and
+> listed in the locked scope below. See the erratum filed beside the report.
+
 Vertical slice is complete and in players' hands. Work now targets the **Public
 Demo** for Next Fest: the lamp-room scene, a journal to track discovered logs,
 and the collision/controller gaps left open in the slice.

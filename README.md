@@ -6,9 +6,14 @@ rowed out into the fog eleven days ago and did not come back.
 
 Built solo by **Fogline Games** (Seattle) in **Godot 4**, shipping to Steam.
 
-> **Status:** Public-demo candidate (Steam Next Fest). Vertical slice +
-> branching conversation with save/load. See [`docs/milestones.md`](docs/milestones.md)
-> for the road to launch.
+> **Status:** Public-demo candidate (Steam Next Fest). This checkout carries the
+> vertical slice (ground floor, branching conversation, save/load, menus),
+> gamepad bindings, and *scaffolds* for the journal and lamp room — the journal
+> has no reader UI and the lamp room has no puzzle here. The demo content pass
+> that completed both lives in the private repo. See
+> [`docs/milestones.md`](docs/milestones.md) for the road to launch and the
+> 21 Oct 2026 erratum to the June scope lock report for what was and was not
+> complete at scope lock.
 
 ## Controls
 
